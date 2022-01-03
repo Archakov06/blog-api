@@ -1,7 +1,7 @@
-const Joi = require("joi");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const { User } = require("../models/User");
+const Joi = require('joi');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { User } = require('../models/User');
 
 module.exports.register = async (req, res) => {
   try {
@@ -24,9 +24,7 @@ module.exports.register = async (req, res) => {
     const oldUser = await User.findOne({ email });
 
     if (oldUser) {
-      return res
-        .status(400)
-        .json({ error: "Пользователь с такой почтой уже зарегистрирован" });
+      return res.status(400).json({ error: 'Пользователь с такой почтой уже зарегистрирован' });
     }
 
     const user = await User.create({
@@ -37,12 +35,12 @@ module.exports.register = async (req, res) => {
     res.status(201).json({
       ...user.toJSON(),
       token: jwt.sign({ userId: user._id }, process.env.JWT_KEY, {
-        expiresIn: "30d",
+        expiresIn: '30d',
       }),
     });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Ошибка при регистрации" });
+    res.status(500).json({ error: 'Ошибка при регистрации' });
   }
 };
 
@@ -61,13 +59,11 @@ module.exports.login = async (req, res) => {
       return res.status(400).json({ errors: error.details });
     }
 
-    const user = await User.findOne({ email }).select("password");
+    const user = await User.findOne({ email }).select('fullName email password');
 
     if (!user) {
       return res.status(404).json();
     }
-
-    console.log(password, user.password);
 
     const passwordCorrect = await bcrypt.compare(password, user.password);
 
@@ -75,14 +71,14 @@ module.exports.login = async (req, res) => {
       return res.status(200).json({
         ...user.toJSON(),
         token: jwt.sign({ userId: user._id }, process.env.JWT_KEY, {
-          expiresIn: "30d",
+          expiresIn: '30d',
         }),
       });
     }
 
-    res.status(400).json({ error: "Неверный логин или пароль" });
+    res.status(400).json({ error: 'Неверный логин или пароль' });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Ошибка при авторизации" });
+    res.status(500).json({ error: 'Ошибка при авторизации' });
   }
 };

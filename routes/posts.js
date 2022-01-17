@@ -1,12 +1,10 @@
 const express = require('express');
-const multer = require('multer');
 const PostController = require('../controllers/Post');
 const { checkUser } = require('../utils/checkUser');
 const { decodeJwtToken } = require('../utils/decodeJwtToken');
 const { Post } = require('../models/Post');
 
 const router = express.Router();
-const upload = multer({ dest: 'public/uploads/' });
 
 router.get('/', PostController.all);
 // router.get("/search", PostController.search);

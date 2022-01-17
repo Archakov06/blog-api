@@ -1,8 +1,8 @@
-const Joi = require("joi");
-const path = require("path");
-const validator = require("validator");
-const { Post } = require("../models/Post");
-const { entityPaginate } = require("../utils/entityPaginate");
+const Joi = require('joi');
+const path = require('path');
+const validator = require('validator');
+const { Post } = require('../models/Post');
+const { entityPaginate } = require('../utils/entityPaginate');
 
 const checkPostBody = Joi.object({
   title: Joi.string().required().min(3).max(256),
@@ -17,7 +17,7 @@ module.exports.all = async (req, res) => {
     return res.status(200).json(result);
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Произошла серверная ошибка" });
+    return res.status(500).json({ error: 'Произошла серверная ошибка' });
   }
 };
 
@@ -39,65 +39,55 @@ module.exports.create = async (req, res) => {
       if (result) {
         return res.status(201).json(result);
       }
-      return res.status(400).json({ error: "Не удалось создать запись" });
+      return res.status(400).json({ error: 'Не удалось создать запись' });
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ error: "Произошла серверная ошибка" });
+      return res.status(500).json({ error: 'Произошла серверная ошибка' });
     }
   }
 };
 
 module.exports.upload = async (req, res) => {
-  console.log(req.files);
   if (!req.files.file) {
-    res.status(400).send("Нет файла для загрузки");
+    res.status(400).send('Нет файла для загрузки');
     return;
   }
 
   const { file } = req.files;
-  const uploadPath = [
-    process.cwd(),
-    "/public/uploads",
-    file.md5 + "_" + file.name,
-  ].join("/");
+  const uploadPath = [process.cwd(), '/public/uploads', file.md5 + '_' + file.name].join('/');
 
   file.mv(uploadPath, function (err) {
     if (err) {
       return res.status(500).send(err);
     }
 
-    res.json({ url: uploadPath.split("/public")[1] });
+    res.json({ url: uploadPath.split('/public')[1] });
   });
 };
 
 module.exports.show = async (req, res) => {
   const id = req.params.id;
   if (!validator.isMongoId(id)) {
-    res.status(400).json({ error: "Неверный ID записи" });
+    res.status(400).json({ error: 'Неверный ID записи' });
   } else {
     try {
-      Post.findOneAndUpdate(
-        { _id: id },
-        { $inc: { views: 1 } },
-        { new: true },
-        async (err) => {
-          if (err) {
-            return res.status(500).json({ errors: err });
-          }
-
-          console.log(123123);
-          const result = await Post.findById(id).populate("user");
-
-          if (result) {
-            return res.status(200).json(result);
-          }
-
-          res.status(404).json({ error: "Такой записи нет в базе" });
+      Post.findOneAndUpdate({ _id: id }, { $inc: { views: 1 } }, { new: true }, async (err) => {
+        if (err) {
+          return res.status(500).json({ errors: err });
         }
-      );
+
+        console.log(123123);
+        const result = await Post.findById(id).populate('user');
+
+        if (result) {
+          return res.status(200).json(result);
+        }
+
+        res.status(404).json({ error: 'Такой записи нет в базе' });
+      });
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ error: "Произошла серверная ошибка" });
+      return res.status(500).json({ error: 'Произошла серверная ошибка' });
     }
   }
 };
@@ -105,7 +95,7 @@ module.exports.show = async (req, res) => {
 module.exports.update = async (req, res) => {
   const id = req.params.id;
   if (!validator.isMongoId(id)) {
-    res.status(400).json({ error: "Неверный ID записи" });
+    res.status(400).json({ error: 'Неверный ID записи' });
   } else {
     const { title, text, photoUrl } = req.body;
     const data = {
@@ -123,10 +113,10 @@ module.exports.update = async (req, res) => {
         if (result) {
           return res.status(202).json();
         }
-        return res.status(404).json({ error: "123Такой записи нет в базе" });
+        return res.status(404).json({ error: '123Такой записи нет в базе' });
       } catch (err) {
         console.log(err);
-        return res.status(500).json({ error: "Произошла серверная ошибка" });
+        return res.status(500).json({ error: 'Произошла серверная ошибка' });
       }
     }
   }
@@ -135,17 +125,17 @@ module.exports.update = async (req, res) => {
 module.exports.delete = async (req, res) => {
   const id = req.params.id;
   if (!validator.isMongoId(id)) {
-    res.status(400).json({ error: "Неверный ID записи" });
+    res.status(400).json({ error: 'Неверный ID записи' });
   } else {
     try {
       const result = await Post.findByIdAndDelete(id);
       if (result) {
         return res.status(202).json();
       }
-      return res.status(404).json({ error: "Такой записи нет в базе" });
+      return res.status(404).json({ error: 'Такой записи нет в базе' });
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ error: "Произошла серверная ошибка" });
+      return res.status(500).json({ error: 'Произошла серверная ошибка' });
     }
   }
 };

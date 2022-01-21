@@ -44,6 +44,22 @@ module.exports.register = async (req, res) => {
   }
 };
 
+module.exports.me = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ errors: 'Ваш аккаунт не найден в базе данных' });
+    }
+
+    return res.json(user);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: 'Произошла ошибка' });
+  }
+};
+
 module.exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;

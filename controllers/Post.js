@@ -99,11 +99,12 @@ module.exports.update = async (req, res) => {
   if (!validator.isMongoId(id)) {
     res.status(400).json({ error: 'Неверный ID записи' });
   } else {
-    const { title, text, photoUrl } = req.body;
+    const { title, text, photoUrl, description } = req.body;
     const data = {
       title,
       text,
       photoUrl,
+      description,
       user: req.userId,
     };
     const { error } = checkPostBody.validate(data);

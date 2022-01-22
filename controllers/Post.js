@@ -7,6 +7,7 @@ const { entityPaginate } = require('../utils/entityPaginate');
 const checkPostBody = Joi.object({
   title: Joi.string().required().min(3).max(256),
   text: Joi.string().required().min(3).max(65536),
+  description: Joi.string().required().min(3).max(400),
   photoUrl: Joi.string().min(3).max(100),
   user: Joi.string().required().length(24),
 });
@@ -22,10 +23,11 @@ module.exports.all = async (req, res) => {
 };
 
 module.exports.create = async (req, res) => {
-  const { title, text, photoUrl } = req.body;
+  const { title, text, photoUrl, description } = req.body;
   const data = {
     title,
     text,
+    description,
     photoUrl,
     user: req.userId,
   };

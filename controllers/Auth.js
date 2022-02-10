@@ -78,7 +78,9 @@ module.exports.login = async (req, res) => {
     const user = await User.findOne({ email }).select('fullName email password');
 
     if (!user) {
-      return res.status(404).json();
+      return res.status(404).json({
+        error: 'Пользователь не найден',
+      });
     }
 
     const passwordCorrect = await bcrypt.compare(password, user.password);
